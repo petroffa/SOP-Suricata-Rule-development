@@ -56,7 +56,7 @@ I want to create a rule to detect outbound activity from PowerShell Empire, a po
 - This exploit will send http packets from our internal network to a server in the external network(with neither connection having a specified ip), so we will want to configure the rule to be $HOME_NET any -> $EXTERNAL_NET any
 - This exploit causes the infected computer to reach out to an external server, which is identifiable in the http cookies, so we will specify this by including “flow:established,to_server:”
 - When starting the exploit, it will send in the connection we are looking for a an http “GET” method, so we will monitor for this by adding “content:"GET"; http_method;”
-- Again looking at the content of the exploit, it starts the http URI with a “/” which is unusual, we will want to monitor for this by putting “content:"/"; http_uri; depth:1;”
+- To focus the scope of our rule to http traffic, we will want to include the segment“content:"/"; http_uri; depth:1;”
 - In the PowerShell Empire exploit(and most exploits in general) contains URIs that end with login/process.php, admin/get.php, and news.php, which is unusual for http traffic. We will search for this by adding to the rule the Perl Compatible Regular Expression “pcre:"/^(?:login\/process|admin\/get|news)\.php$/RU";”
 - PowerShell Empire appears to include the string “session=” in the http data(which is unusual), so we will include this in the monitoring by adding “content:"session="; http_cookie;”
 - PowerShell also includes Base64 in its http cookies, which is highly unusual. We will check for that by adding a Perl Compatible Regular Expression(pcre) to look for base64 encoded data: “pcre:"/^(?:[A-Z0-9+/]{4})*(?:[A-Z0-9+/]{2}==|[A-Z0-9+/]{3}=|[A-Z0-9+/]{4})$/CRi";”
